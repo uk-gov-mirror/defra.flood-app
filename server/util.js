@@ -10,12 +10,10 @@ function request (method, url, options, ext = false) {
     .then(response => {
       const res = response.res
       const payload = response.payload
-
       if (res.statusCode !== 200) {
         const err = (payload || new Error('Unknown error'))
         throw err
       }
-
       return payload
     })
 }
@@ -31,7 +29,6 @@ function post (url, options) {
 function postJson (url, options) {
   options = options || {}
   options.json = true
-
   return post(url, options)
 }
 
@@ -67,7 +64,7 @@ function cleanseLocation (location) {
 }
 
 function addBufferToBbox (bbox, m) {
-  // Convert bbox into polygon, add buffer, and convert back to bbox as db query needs a bbox envelope
+  // Convert bbox (binding box) )into polygon, add buffer, and convert back to bbox as db query needs a bbox envelope
   return turf.bbox(turf.buffer(turf.bboxPolygon(bbox), m, { units: 'meters' }))
 }
 

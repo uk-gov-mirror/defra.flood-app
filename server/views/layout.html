@@ -3,11 +3,12 @@
 {% from "footer/macro.njk" import govukFooter %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set metaTitle = (pageTitle or model.pageTitle or 'Check flood risk') + ' - GOV.UK' %}
+{% set metaTitle = (pageTitle or model.pageTitle or 'Check for flooding') + ' - GOV.UK' %}
 {% set metaDescription = model.metaDescription | default('Check your risk of flooding: get current flood warnings, river and sea levels, check the 5-day forecast or use flood risk maps') %}
 {% set metaKeywords = model.metaKeywords | default('flooding, flood risk, flood map, flood warnings, flood alerts, river levels, advice, guiance, gov.uk, england') %}
 {% set metaCanonical = model.metaCanonical %}
 {% set metaNoIndex = model.metaNoIndex %}
+{% set metaFeedback = model.feedback %}
 
 {% block pageTitle %}
   {{ metaTitle }}
@@ -26,7 +27,7 @@
   {% if metaNoIndex %}
   <meta name="robots" content="noindex" />
   {% endif %}
-  <!-- Stage: {{ env }} -->
+  <!-- Stage: {{ env }} {{ stage }} -->
   <!-- Application version: {{ appVersion }} -->
 
   <!--[if !IE 8]><!-->
@@ -60,8 +61,6 @@
       a.appendChild(r);
     })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
   </script> -->
-  <!-- Env: {{env}} -->
-  <!-- Application version: {{appVersion}} -->
 {% endblock %}
 
 {% block header %}
@@ -69,7 +68,7 @@
     homepageUrl: "https://www.gov.uk/",
     containerClasses: "govuk-width-container",
     serviceName: serviceName,
-    serviceUrl: "/start-page"
+    serviceUrl: "/find-location"
   }) }}
 
 {% endblock %}
@@ -84,18 +83,21 @@
     }) }}
   {% endif %}
 
+  <!-- If external http calls are being mocked -->
+  {% if isMockExternalHttp %}
+    {{ govukWarningText({
+      html: 'External Http requests are currently being mocked on this service,  please view the <a href="https://flood-warning-information.service.gov.uk/warnings">production service</a> for up to date warnings data',
+      iconFallbackText: "Warning"
+    }) }}
+  {% endif %}
     {{ govukPhaseBanner({
     tag: {
       text: "Beta"
     },
-    html: 'This is a new service. You can <a class="govuk-link" href="https://flood-warning-information.service.gov.uk">view the live flood information service at any time</a>.'
+    html: 'This is a new service – <a class="govuk-link" href="https://docs.google.com/forms/d/1zi57UAahhGngbi1gIkagNJ1ygQPPlrk68rc2VAbxr9c/edit?usp=sharing">leave feedback</a> to help us to improve it, or <a class="govuk-link" href="https://flood-warning-information.service.gov.uk/warnings">use the current service</a>.'
   }) }}
 
-  {#{{ govukBackLink({
-    href: "javascript:window.history.go(-1)",
-    text: "Back"
-  }) }}
-  #}
+
 {% endblock %}
 
 {% block content %}
@@ -121,12 +123,17 @@
   {% endif %}
 
   {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
-  <script src="{{ assetPath }}/all.js"></script>
+  <script src="{{ assetPath }}/js/all.js"></script>
   <script src="{{ assetPath }}/js/core.js"></script>
   <script>window.GOVUKFrontend.initAll()</script>
 {% endblock %}
 
 {% block footer %}
+  {% if metaFeedback %}
+    {% include "./partials/feedback.html" %}
+  {% endif %}
+
+
   {{ govukFooter({
     meta: {
       items: [

@@ -1,6 +1,5 @@
 const util = require('../util')
-const config = require('../config')
-const serviceUrl = config.serviceUrl
+const { serviceUrl, geoserverUrl } = require('../config')
 
 // cached flood data
 const Floods = require('../models/floods')
@@ -44,7 +43,8 @@ module.exports = {
   },
 
   getFloodsWithin (bbox) {
-    return util.getJson(`${serviceUrl}/floods-within/${bbox[0]}/${bbox[1]}/${bbox[2]}/${bbox[3]}`)
+    const xyCoordsPath = bbox.join('/')
+    return util.getJson(`${serviceUrl}/floods-within/${xyCoordsPath}`)
   },
 
   getFloodArea (code) {
@@ -57,6 +57,7 @@ module.exports = {
     return util.getJson(`${serviceUrl}/flood-area/${type}/${code}`)
   },
 
+  // fetching the flood guidance statement using service layer leveraging s3
   getOutlook () {
     return util.getJson(`${serviceUrl}/flood-guidance-statement`)
   },
@@ -66,17 +67,16 @@ module.exports = {
   },
 
   getStationsWithin (bbox) {
-    return util.getJson(`${serviceUrl}/stations-within/${bbox[0]}/${bbox[1]}/${bbox[2]}/${bbox[3]}`)
+    const xyCoordsPath = bbox.join('/')
+    return util.getJson(`${serviceUrl}/stations-within/${xyCoordsPath}`)
   },
 
   getStationsWithinTargetArea (taCode) {
     return util.getJson(`${serviceUrl}/stations-within-target-area/${taCode}`)
   },
 
-  getWarningsAlertsWithinStationBuffer (longLat) {
-    const long = longLat[0]
-    const lat = longLat[1]
-    return util.getJson(`${serviceUrl}/warnings-alerts-within-station-buffer/${long}/${lat}`)
+  getWarningsAlertsWithinStationBuffer (rloiId) {
+    return util.getJson(`${serviceUrl}/warnings-alerts-within-station-buffer/${rloiId}`)
   },
 
   getRiverById (id) {
@@ -87,6 +87,7 @@ module.exports = {
     return util.getJson(`${serviceUrl}/river-station-by-station-id/${id}`)
   },
 
+  // direction is either 'u' or 'd'
   getStationTelemetry (id, direction) {
     return util.getJson(`${serviceUrl}/station/${id}/${direction}/telemetry`)
   },
@@ -98,10 +99,9 @@ module.exports = {
   getStationForecastData (id) {
     return util.getJson(`${serviceUrl}/station/${id}/forecast/data`)
   },
-
   // DL: WebGL layers don't support z-index so source data needs to be in desired order, sortBy=atrisk added
   getStationsGeoJson () {
-    return util.getJson(`${config.geoserverUrl}/geoserver/flood/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=flood:stations&sortBy=atrisk&outputFormat=application%2Fjson`)
+    return util.getJson(`${geoserverUrl}/geoserver/flood/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=flood:stations&sortBy=atrisk&outputFormat=application%2Fjson`)
   },
 
   getIsEngland (lng, lat) {
@@ -113,7 +113,8 @@ module.exports = {
   },
 
   getImpactsWithin (bbox) {
-    return util.getJson(`${serviceUrl}/impacts-within/${bbox[0]}/${bbox[1]}/${bbox[2]}/${bbox[3]}`)
+    const xyCoordsPath = bbox.join('/')
+    return util.getJson(`${serviceUrl}/impacts-within/${xyCoordsPath}`)
   },
 
   getRivers () {
@@ -129,7 +130,7 @@ module.exports = {
   },
 
   getGeoserverHealth () {
-    return util.getJson(`${config.geoserverUrl}/geoserver/flood/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=flood:flood_warning_alert&maxFeatures=1&outputFormat=application%2Fjson`)
+    return util.getJson(`${geoserverUrl}/geoserver/flood/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=flood:flood_warning_alert&maxFeatures=1&outputFormat=application%2Fjson`)
   },
 
   getStationsHealth () {

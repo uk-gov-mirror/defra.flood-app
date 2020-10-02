@@ -34,9 +34,10 @@ module.exports = {
     isCached: true,
     context: {
       env: config.env,
+      stage: config.stage,
       appVersion: pkg.version,
       assetPath: '/assets',
-      serviceName: 'Check flood risk',
+      serviceName: 'Check for flooding',
       gaAccId,
       gaOptId,
       fbAppId

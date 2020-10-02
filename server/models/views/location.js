@@ -17,7 +17,8 @@ class ViewModel {
       pageTitle: `Check for flooding in ${title}`,
       metaDescription: `Nearby flood alerts and warnings; latest river and sea levels and flood risk advice for residents living in the ${title} area.`,
       floodRiskUrl,
-      dateFormatted: 'Up to date as of ' + moment.tz('Europe/London').format('h:mma') + ' on ' + moment.tz('Europe/London').format('D MMMM YYYY')
+      dateFormatted: 'Up to date as of ' + moment.tz('Europe/London').format('h:mma') + ' on ' + moment.tz('Europe/London').format('D MMMM YYYY'),
+      feedback: true
     })
 
     const hasFloods = !!floods.length
@@ -85,7 +86,7 @@ class ViewModel {
               this.alerts = group.floods.length
               if (group.floods.length === 1) {
                 this.alertsSummaryLink = `/target-area/${group.floods[0].ta_code}`
-                this.alertsSummaryLinkText = 'A flood alert'
+                this.alertsSummaryLinkText = '1 flood alert'
                 this.alertsSummaryText = 'is'
               } else {
                 this.alertsSummaryLink = `/alerts-and-warnings?q=${location}#alerts`
@@ -98,13 +99,12 @@ class ViewModel {
             this.removed = group.floods.length
             if (group.floods.length === 1) {
               this.removedLink = `/target-area/${group.floods[0].ta_code}`
-              this.removedLinkText = group.floods[0].ta_name
-              this.removedText1 = 'The flood warning for '
-              this.removedText2 = 'was removed'
+              this.removedLinkText = '1 flood alert or warning was removed '
+              this.removedText = 'in the last 24 hours.'
             } else {
               this.removedLink = `/alerts-and-warnings?q=${location}#removed`
-              this.removedLinkText = 'Some flood alerts and warnings were removed'
-              this.removedText2 = 'in the last 24 hours'
+              this.removedLinkText = 'Flood alerts and warnings were removed'
+              this.removedText = 'in the last 24 hours'
             }
             break
         }

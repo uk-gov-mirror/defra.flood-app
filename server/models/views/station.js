@@ -24,6 +24,9 @@ class ViewModel {
     })
     */
 
+    Object.assign(this, {
+      feedback: true
+    })
     // Group warnings/alerts by severity level
 
     const warningsAlertsGroups = groupBy(warningsAlerts, 'severity_value')
@@ -214,7 +217,6 @@ class ViewModel {
       } else {
         this.station.hasPercentiles = false
       }
-
       // Low/Med/High
       if (this.station.hasPercentiles) {
         if (this.station.type === 'c') {
@@ -225,7 +227,7 @@ class ViewModel {
             this.station.stateInformation = 'above ' + this.station.percentile5 + 'm'
           } else if (parseFloat(this.station.recentValue._) < parseFloat(this.station.percentile95)) {
             this.station.state = 'Low'
-            this.station.stateInformation = 'below ' + this.station.percentile5 + 'm'
+            this.station.stateInformation = 'below ' + this.station.percentile95 + 'm'
           } else {
             this.station.state = 'Normal'
             this.station.stateInformation = this.station.percentile95 + 'm to ' + this.station.percentile5 + 'm'

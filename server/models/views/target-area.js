@@ -17,10 +17,17 @@ class ViewModel {
 
     const mapTitle = `View map of the flood ${type} area`
 
+    const displayableText = type === 'warning' ? 'We\'ll update this page when there\'s a flood warning in the area.\nA flood warning means flooding to some property is expected. ' +
+      'A severe flood warning means there\'s a danger to life.' : 'We\'ll update this page when there\'s a flood alert in the area, which means flooding to low lying land is possible.'
     let situation = flood ? flood.situation : ''
 
-    const dateSituationChanged = flood ? moment.tz(flood.situation_changed, 'Europe/London').format('D MMMM YYYY') : moment.tz('Europe/London').format('D MMMM YYYY')
-    const timeSituationChanged = flood ? moment.tz(flood.situation_changed, 'Europe/London').format('h:mma') : moment.tz('Europe/London').format('h:mma')
+    const dateSituationChanged = flood
+      ? moment.tz(flood.situation_changed, 'Europe/London').format('D MMMM YYYY')
+      : moment.tz('Europe/London').format('D MMMM YYYY')
+
+    const timeSituationChanged = flood
+      ? moment.tz(flood.situation_changed, 'Europe/London').format('h:mma')
+      : moment.tz('Europe/London').format('h:mma')
 
     const areaDescription = `Flood ${type} area: ${area.description}`
     const parentAreaAlert = (!!(((flood && severityLevel.id === 4) && (type === 'warning')) || !flood) && (parentSeverityLevel && parentSeverityLevel.isActive))
@@ -51,9 +58,11 @@ class ViewModel {
       severity: severityLevel,
       situationChanged,
       situation: situation,
+      displayableText: displayableText,
       parentAreaAlert: parentAreaAlert,
       areaDescription: areaDescription,
       targetArea: area.code,
+      feedback: true,
       mapTitle
     }, options)
   }
