@@ -1,5 +1,6 @@
 const turf = require('@turf/turf')
 const polygonSmooth = require('@turf/polygon-smooth')
+const riskJson = require('./riskJson.json')
 
 class Outlook {
   constructor (outlook) {
@@ -31,21 +32,25 @@ class Outlook {
         let rRisk = 0
         let sRisk = 0
         let cRisk = 0
+        let titleSource
 
         if (riskAreaBlock.risk_levels.river) {
           rImpact = riskAreaBlock.risk_levels.river[0]
           rLikelyhood = riskAreaBlock.risk_levels.river[1]
           rRisk = lookup[rImpact - 1][rLikelyhood - 1]
+          titleSource = 'river'
         }
         if (riskAreaBlock.risk_levels.surface) {
           sImpact = riskAreaBlock.risk_levels.surface[0]
           sLikelyhood = riskAreaBlock.risk_levels.surface[1]
           sRisk = lookup[sImpact - 1][sLikelyhood - 1]
+          titleSource = 'surface'
         }
         if (riskAreaBlock.risk_levels.coastal) {
           cImpact = riskAreaBlock.risk_levels.coastal[0]
           cLikelyhood = riskAreaBlock.risk_levels.coastal[1]
           cRisk = lookup[cImpact - 1][cLikelyhood - 1]
+          titleSource = 'coastal'
         }
         const riskLevel = Math.max(rRisk, sRisk, cRisk)
 
@@ -63,7 +68,9 @@ class Outlook {
               days: riskAreaBlock.days,
               labelPosition: poly.label_position,
               'risk-level': riskLevel,
-              'z-index': (riskLevel * 10)
+              'z-index': (riskLevel * 10),
+              titleLevel: riskJson.riskLevel[riskLevel],
+              titleSource
             }
           }
 
