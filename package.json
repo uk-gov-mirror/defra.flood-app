@@ -69,7 +69,8 @@
   "devDependencies": {},
   "standard": {
     "ignore": [
-      "server/dist"
+      "server/dist",
+      "service-down"
     ]
   }
 }
