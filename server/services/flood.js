@@ -7,6 +7,7 @@ const Outlook = require('../models/outlook')
 let floods = null
 let outlook = null
 let stationsGeojson = null
+let rainfallGeojson = null
 
 module.exports = {
   // ############ Internals ################
@@ -20,11 +21,30 @@ module.exports = {
   },
   // get cached outlook object
   get outlook () {
-    return outlook
+    try {
+      return outlook
+    } catch (err) {
+      console.error(`Get Outlook data error - [${err}]`)
+      return { dataError: true }
+    }
   },
   // set cached outlook object
   set outlook (data) {
-    outlook = data && new Outlook(data)
+    if (data.dataError) {
+      console.error('Set Outlook data error encountered: ', data)
+    } else {
+      try {
+        const newData = new Outlook(data)
+        if (newData.dataError) {
+          console.error('Set Outlook data error encountered: ', newData)
+        } else {
+          outlook = data && new Outlook(data)
+        }
+      } catch (err) {
+        console.error(`Set Outlook cached data error - [${err}]`)
+        outlook = { dataError: true }
+      }
+    }
   },
 
   get stationsGeojson () {
@@ -33,6 +53,14 @@ module.exports = {
 
   set stationsGeojson (data) {
     stationsGeojson = data
+  },
+
+  get rainfallGeojson () {
+    return rainfallGeojson
+  },
+
+  set rainfallGeojson (data) {
+    rainfallGeojson = data
   },
 
   // ############### Externals ################
@@ -58,8 +86,13 @@ module.exports = {
   },
 
   // fetching the flood guidance statement using service layer leveraging s3
-  getOutlook () {
-    return util.getJson(`${serviceUrl}/flood-guidance-statement`)
+  async getOutlook () {
+    try {
+      return await util.getJson(`${serviceUrl}/flood-guidance-statement`)
+    } catch (err) {
+      console.error(`Get Outlook data error - [${err}]`)
+      return { dataError: true }
+    }
   },
 
   getStationById (id, direction) {
@@ -102,6 +135,10 @@ module.exports = {
   // DL: WebGL layers don't support z-index so source data needs to be in desired order, sortBy=atrisk added
   getStationsGeoJson () {
     return util.getJson(`${geoserverUrl}/geoserver/flood/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=flood:stations&sortBy=atrisk&outputFormat=application%2Fjson`)
+  },
+
+  getRainfallGeojson () {
+    return util.getJson(`${geoserverUrl}/geoserver/flood/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=flood:rainfall_stations&outputFormat=application%2Fjson`)
   },
 
   getIsEngland (lng, lat) {

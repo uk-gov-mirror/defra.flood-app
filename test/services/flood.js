@@ -103,6 +103,21 @@ lab.experiment('Flood service test', () => {
 
     Code.expect(result).to.equal('ok')
   })
+  lab.test('Test getOutlook endpoint thrown error', async () => {
+    const util = require('../../server/util')
+
+    sandbox
+      .mock(util)
+      .expects('getJson')
+      .withArgs('http://server2/flood-guidance-statement')
+      .once()
+      .throws({ statusCode: 400, error: 'Bad Request', message: 'Failed to get the flood guidance statement' })
+
+    const floodService = require('../../server/services/flood')
+    const result = await floodService.getOutlook()
+
+    Code.expect(result).to.equal({ dataError: true })
+  })
   lab.test('Test getStationById endpoint', async () => {
     const direction = 'u'
     const id = 1001
@@ -264,6 +279,23 @@ lab.experiment('Flood service test', () => {
     const floodService = require('../../server/services/flood')
 
     const result = await floodService.getStationsGeoJson()
+
+    Code.expect(result).to.equal('ok')
+  })
+  lab.test('Test getRainfallGeojson endpoint', async () => {
+    const util = require('../../server/util')
+    sandbox.stub(config, 'geoserverUrl').value('http://server1')
+
+    sandbox
+      .mock(util)
+      .expects('getJson')
+      .withArgs('http://server1/geoserver/flood/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=flood:rainfall_stations&outputFormat=application%2Fjson')
+      .once()
+      .returns('ok')
+
+    const floodService = require('../../server/services/flood')
+
+    const result = await floodService.getRainfallGeojson()
 
     Code.expect(result).to.equal('ok')
   })
