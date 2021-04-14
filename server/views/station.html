@@ -7,7 +7,7 @@
   <div class="govuk-grid-column-full">
     <nav class="defra-flood-nav" {% if model.referer %}id="browserBackContainer"{% endif %}>
       {% if model.station.riverNavigation and model.station.riverNavigation.navigable %}
-        <a href="/river-and-sea-levels?river-id={{model.station.riverNavigation.river_id}}" class="defra-river-nav-link">{{ model.station.riverNavigation.river_name }}</a>
+        <a href="/river-and-sea-levels?river-id={{model.station.riverNavigation.river_id}}" class="defra-river-nav-link">Check nearby measurements</a>
       {% endif %}
       <span id="map"></span>
     </nav>
