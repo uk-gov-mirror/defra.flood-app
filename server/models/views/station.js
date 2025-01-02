@@ -45,83 +45,29 @@ class ViewModel {
     // Determine appropriate warning/alert text for banner
     this.banner = numAlerts || numWarnings || numSevereWarnings
 
-    switch (numAlerts) {
-      case 0:
-        break
-      case 1:
-        if (!numWarnings && !numSevereWarnings) {
-          this.severityLevel = 'alert'
-          this.alertsBanner = 'There is a flood alert within 5 miles of this measuring station'
-          this.alertsLink = `/target-area/${warningsAlertsGroups['1'][0].ta_code}`
-        }
-        this.isAlertLinkRendered = true
-        break
-      default: {
-        this.severityLevel = 'alert'
-        this.alertsBanner = 'There are flood alerts within 5 miles of this measuring station'
-        this.alertsLink = `/alerts-and-warnings?station=${this.station.id}#alerts`
-        this.isAlertLinkRendered = true
-      }
-    }
-    switch (numWarnings) {
-      case 0:
-        break
-      case 1:
-        if (!numAlerts && !numSevereWarnings) {
-          this.severityLevel = 'warning'
-          this.warningsBanner = `Flood warning for ${warningsAlertsGroups['2'][0].ta_name}`
-          this.warningsLink = `/target-area/${warningsAlertsGroups['2'][0].ta_code}`
-        } else {
-          this.severityLevel = 'warning'
-          this.warningsBanner = 'There is a flood warning within 5 miles of this measuring station'
-          this.warningsLink = `/alerts-and-warnings?station=${this.station.id}#warnings`
-        }
-        this.isWarningLinkRendered = true
-        break
-      default: {
-        this.severityLevel = 'warning'
-        this.warningsBanner = 'There are flood warnings within 5 miles of this measuring station'
-        this.warningsLink = `/alerts-and-warnings?station=${this.station.id}#warnings`
-        this.isWarningLinkRendered = true
-      }
-    }
-
-    switch (numSevereWarnings) {
-      case 0:
-        break
-      case 1:
-        if (!numAlerts && !numWarnings) {
-          this.severityLevel = 'severe'
-          this.severeBanner = `Severe flood warning for ${warningsAlertsGroups['3'][0].ta_name}`
-          this.severeLink = `/target-area/${warningsAlertsGroups['3'][0].ta_code}`
-        } else {
-          this.severityLevel = 'severe'
-          this.severeBanner = 'There is a severe flood warning within 5 miles of this measuring station'
-          this.severeLink = `/alerts-and-warnings?station=${this.station.id}#severe`
-        }
-        this.isSevereLinkRenedered = true
-        break
-      default: {
-        this.severityLevel = 'severe'
-        this.severeBanner = 'There are severe flood warnings within 5 miles of this measuring station'
-        this.severeLink = `/alerts-and-warnings?station=${this.station.id}#severe`
-        this.isSevereLinkRenedered = true
-      }
-    }
-
-    if (numSevereWarnings && (numWarnings || numAlerts)) {
+    if (numSevereWarnings) {
+      this.severityLevel = 'severe'
+      this.severeBanner = `There ${numSevereWarnings > 1 ? 'are' : 'is a'} severe flood warning${numSevereWarnings > 1 ? 's' : ''} within 5 miles of this measuring station`
+      this.severeLink = `/alerts-and-warnings?station=${this.station.id}#severe`
       this.isSevereLinkRenedered = true
       this.isWarningLinkRendered = false
       this.isAlertLinkRendered = false
       this.mainIcon = getBannerIcon(bannerIconId3)
-    } else if (numWarnings && numAlerts) {
+    } else if (numWarnings) {
+      this.severityLevel = 'warning'
+      this.warningsBanner = `There ${numWarnings > 1 ? 'are' : 'is a'} flood warning${numWarnings > 1 ? 's' : ''} within 5 miles of this measuring station`
+      this.warningsLink = `/alerts-and-warnings?station=${this.station.id}#warnings`
       this.isWarningLinkRendered = true
       this.isAlertLinkRendered = false
       this.mainIcon = getBannerIcon(2)
     } else {
+      this.severityLevel = 'alert'
+      this.alertsBanner = `There ${numAlerts > 1 ? 'are' : 'is a'} flood alert${numAlerts > 1 ? 's' : ''} within 5 miles of this measuring station`
+      this.alertsLink = `/alerts-and-warnings?station=${this.station.id}#alerts`
       this.isAlertLinkRendered = true
       this.mainIcon = getBannerIcon(1)
     }
+
     this.id = this.station.id
     this.telemetry = telemetry || []
     this.catchments = []
