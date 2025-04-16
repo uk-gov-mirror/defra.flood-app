@@ -39,6 +39,7 @@ class Floods {
         id: 'flood.' + item.ta_code,
         geometry: item.geometry ? JSON.parse(item.geometry) : null,
         properties: {
+          id: item.ta_code,
           ta_code: item.ta_code,
           ta_name: item.ta_name,
           severity_value: item.severity_value,
