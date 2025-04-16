@@ -34,7 +34,7 @@ class Floods {
       features: []
     }
     this._geojson.features = this._floods.floods.map(item => {
-      const state = item.severity_value === 1 ? 'severe' : item.severity_value === 2 ? 'warning' : item.severity_value === 3 ? 'alert' : 'removed'
+      const state = item.severity_value === 3 ? 'severe' : item.severity_value === 2 ? 'warning' : item.severity_value === 1 ? 'alert' : 'removed'
       return {
         type: 'Feature',
         id: 'flood.' + item.ta_code,
