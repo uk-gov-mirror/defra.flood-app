@@ -43,6 +43,7 @@ class Floods {
           id: item.ta_code,
           ta_code: item.ta_code,
           ta_name: item.ta_name,
+          name: item.ta_name,
           severity_value: item.severity_value,
           severity: item.severity,
           state: state
